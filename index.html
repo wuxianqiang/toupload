@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    #droptarget {
+      width: 100%;
+      word-break: break-all;
+      font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+      color: #24292e;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      height: 234px;
+      text-align: center;
+      line-height: 234px;
+      margin-bottom: 10px;
+    }
+
+    .delete {
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      line-height: 36px;
+      cursor: pointer;
+      text-align: center;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    ul,
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="droptarget">
+    将文件拖拽到此处
+  </div>
+  <ul id="wrapper">
+  </ul>
+  <script>
+    let droptarget = document.getElementById("droptarget");
+    let wrapper = document.getElementById("wrapper")
+    function handleEvent(event) {
+      event.preventDefault(event);
+      if (event.type == "drop") {
+        let files = event.dataTransfer.files;
+        let i = 0;
+        let len = files.length;
+        while (i < len) {
+          if (/image/.test(files[i].type)) {
+            let info = files[i].name + " (" + files[i].type + ", " + files[i].size + " bytes) ";
+            let reader = new FileReader()
+            reader.readAsDataURL(files[i])
+            reader.onload = function () {
+              let src = reader.result
+              let li = document.createElement('li')
+              let div = document.createElement('div')
+              div.innerHTML = '删除上面一张'
+              div.className = 'delete'
+              div.onclick = function () {
+                wrapper.removeChild(this.parentNode)
+              }
+              let img = new Image()
+              img.src = src
+              img.title = info
+              li.appendChild(img)
+              li.appendChild(div)
+              wrapper.insertBefore(li, wrapper.childNodes[0])
+            }
+          }
+          i++;
+        }
+      }
+    }
+    droptarget.addEventListener('dragenter', handleEvent)
+    droptarget.addEventListener('dragover', handleEvent)
+    droptarget.addEventListener('drop', handleEvent)
+  </script>
+</body>
+
+</html>
